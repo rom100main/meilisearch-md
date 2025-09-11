@@ -1,7 +1,7 @@
 import { App, Plugin, TFile } from 'obsidian';
 import { MeilisearchService } from './src/services/meilisearch';
 import { IndexingService } from './src/services/indexing';
-import { SearchModal } from './src/modals/search-modal';
+import { SearchModal } from './src/modals/SearchModal';
 import { MeilisearchSettingTab } from './src/settings/ui';
 import { MeilisearchSettings, IndexingProgress } from './src/types';
 import { DEFAULT_SETTINGS } from './src/settings';
@@ -238,7 +238,7 @@ export default class MeilisearchPlugin extends Plugin {
       return;
     }
 
-    new SearchModal(this.app, this.meilisearchService).open();
+    new SearchModal(this, this.meilisearchService).open();
   }
 
   /**
