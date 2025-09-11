@@ -1,134 +1,288 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { App, Plugin, TFile } from 'obsidian';
+import { MeilisearchService } from './src/services/meilisearch';
+import { IndexingService } from './src/services/indexing';
+import { SearchModal } from './src/modals/search-modal';
+import { MeilisearchSettingTab } from './src/settings/ui';
+import { MeilisearchSettings, IndexingProgress } from './src/types';
+import { DEFAULT_SETTINGS } from './src/settings';
+import { showNotice, showError, showSuccess } from './src/utils/notifications';
 
-// Remember to rename these classes and interfaces!
+export default class MeilisearchPlugin extends Plugin {
+  settings: MeilisearchSettings;
+  meilisearchService: MeilisearchService;
+  indexingService: IndexingService;
+  indexingProgress: IndexingProgress = {
+    total: 0,
+    processed: 0,
+    status: 'idle',
+  };
 
-interface MyPluginSettings {
-	mySetting: string;
-}
+  async onload() {
+    await this.loadSettings();
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default'
-}
+    // Initialize services
+    this.meilisearchService = new MeilisearchService(
+      this.settings,
+      (progress: IndexingProgress) => {
+        this.indexingProgress = progress;
+      }
+    );
 
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+    this.indexingService = new IndexingService(
+      this.app,
+      this.meilisearchService,
+      (progress: IndexingProgress) => {
+        this.indexingProgress = progress;
+      }
+    );
 
-	async onload() {
-		await this.loadSettings();
+    // Initialize Meilisearch connection
+    await this.initializeMeilisearch();
 
-		// This creates an icon in the left ribbon.
-		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
-			// Called when the user clicks the icon.
-			new Notice('This is a notice!');
-		});
-		// Perform additional things with the ribbon
-		ribbonIconEl.addClass('my-plugin-ribbon-class');
+    // Register commands
+    this.addCommands();
 
-		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
-		const statusBarItemEl = this.addStatusBarItem();
-		statusBarItemEl.setText('Status Bar Text');
+    // Register settings tab
+    this.addSettingTab(new MeilisearchSettingTab(this.app, this));
 
-		// This adds a simple command that can be triggered anywhere
-		this.addCommand({
-			id: 'open-sample-modal-simple',
-			name: 'Open sample modal (simple)',
-			callback: () => {
-				new SampleModal(this.app).open();
-			}
-		});
-		// This adds an editor command that can perform some operation on the current editor instance
-		this.addCommand({
-			id: 'sample-editor-command',
-			name: 'Sample editor command',
-			editorCallback: (editor: Editor, view: MarkdownView) => {
-				console.log(editor.getSelection());
-				editor.replaceSelection('Sample Editor Command');
-			}
-		});
-		// This adds a complex command that can check whether the current state of the app allows execution of the command
-		this.addCommand({
-			id: 'open-sample-modal-complex',
-			name: 'Open sample modal (complex)',
-			checkCallback: (checking: boolean) => {
-				// Conditions to check
-				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
-				if (markdownView) {
-					// If checking is true, we're simply "checking" if the command can be run.
-					// If checking is false, then we want to actually perform the operation.
-					if (!checking) {
-						new SampleModal(this.app).open();
-					}
+    // Auto-index on startup if enabled
+    if (this.settings.autoIndexOnStartup) {
+      await this.autoIndex();
+    }
 
-					// This command will only show up in Command Palette when the check function returns true
-					return true;
-				}
-			}
-		});
+    // Register file event handlers for real-time indexing
+    this.registerFileHandlers();
+  }
 
-		// This adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new SampleSettingTab(this.app, this));
+  onunload() {
+    // Cleanup will be handled automatically by Obsidian
+    console.log('Meilisearch plugin unloaded');
+  }
 
-		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
-		// Using this function will automatically remove the event listener when this plugin is disabled.
-		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
-			console.log('click', evt);
-		});
+  async loadSettings() {
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+  }
 
-		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
-	}
+  async saveSettings() {
+    await this.saveData(this.settings);
+    
+    // Update Meilisearch service with new settings
+    if (this.meilisearchService) {
+      this.meilisearchService.updateSettings(this.settings);
+    }
+  }
 
-	onunload() {
+  /**
+   * Initialize Meilisearch connection
+   */
+  private async initializeMeilisearch(): Promise<void> {
+    try {
+      const success = await this.meilisearchService.initialize();
+      if (!success) {
+        showError('Failed to initialize Meilisearch. Check your settings.');
+      }
+    } catch (error) {
+      console.error('Failed to initialize Meilisearch:', error);
+      showError(`Failed to initialize Meilisearch: ${error.message}`);
+    }
+  }
 
-	}
+  /**
+   * Register plugin commands
+   */
+  private addCommands(): void {
+    // Search command
+    this.addCommand({
+      id: 'meilisearch-search',
+      name: 'Search with Meilisearch',
+      callback: () => {
+        this.openSearchModal();
+      },
+    });
 
-	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-	}
+    // Force re-index command
+    this.addCommand({
+      id: 'meilisearch-force-reindex',
+      name: 'Force re-index with Meilisearch',
+      callback: async () => {
+        try {
+          await this.forceReindex();
+        } catch (error) {
+          showError(`Force re-index failed: ${error.message}`);
+        }
+      },
+    });
 
-	async saveSettings() {
-		await this.saveData(this.settings);
-	}
-}
+    // Test connection command
+    this.addCommand({
+      id: 'meilisearch-test-connection',
+      name: 'Test Meilisearch connection',
+      callback: async () => {
+        try {
+          const success = await this.testConnection();
+          if (success) {
+            showSuccess('Connection to Meilisearch successful!');
+          } else {
+            showError('Failed to connect to Meilisearch. Check your settings.');
+          }
+        } catch (error) {
+          showError(`Connection test failed: ${error.message}`);
+        }
+      },
+    });
+  }
 
-class SampleModal extends Modal {
-	constructor(app: App) {
-		super(app);
-	}
+  /**
+   * Register file event handlers for real-time indexing
+   */
+  private registerFileHandlers(): void {
+    // Handle file creation
+    this.registerEvent(
+      this.app.vault.on('create', async (file) => {
+        if (this.meilisearchService.isInitialized() && file instanceof TFile && file.extension === 'md') {
+          // Add a small delay to ensure the file is fully written
+          setTimeout(async () => {
+            try {
+              const content = await this.app.vault.read(file);
+              await this.indexFile(file, content);
+            } catch (error) {
+              console.error('Failed to index new file:', error);
+            }
+          }, 500);
+        }
+      })
+    );
 
-	onOpen() {
-		const {contentEl} = this;
-		contentEl.setText('Woah!');
-	}
+    // Handle file modification
+    this.registerEvent(
+      this.app.vault.on('modify', async (file) => {
+        if (this.meilisearchService.isInitialized() && file instanceof TFile && file.extension === 'md') {
+          try {
+            const content = await this.app.vault.read(file);
+            await this.indexFile(file, content);
+          } catch (error) {
+            console.error('Failed to index modified file:', error);
+          }
+        }
+      })
+    );
 
-	onClose() {
-		const {contentEl} = this;
-		contentEl.empty();
-	}
-}
+    // Handle file deletion
+    this.registerEvent(
+      this.app.vault.on('delete', async (file) => {
+        if (this.meilisearchService.isInitialized() && file instanceof TFile && file.extension === 'md') {
+          try {
+            await this.removeFromIndex(file);
+          } catch (error) {
+            console.error('Failed to remove file from index:', error);
+          }
+        }
+      })
+    );
+  }
 
-class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
+  /**
+   * Auto-index on startup
+   */
+  private async autoIndex(): Promise<void> {
+    try {
+      // Load metadata first
+      await this.indexingService.loadMetadata();
+      
+      // Perform incremental indexing
+      await this.indexingService.incrementalIndex();
+    } catch (error) {
+      console.error('Auto-indexing failed:', error);
+      showError(`Auto-indexing failed: ${error.message}`);
+    }
+  }
 
-	constructor(app: App, plugin: MyPlugin) {
-		super(app, plugin);
-		this.plugin = plugin;
-	}
+  /**
+   * Index a single file
+   */
+  private async indexFile(file: any, content: string): Promise<void> {
+    try {
+      // Parse the document
+      const { parseDocument } = await import('./src/services/parser');
+      const document = parseDocument(file, content);
+      
+      // Index the document
+      await this.meilisearchService.indexDocuments([document]);
+      
+      console.log(`Indexed file: ${file.path}`);
+    } catch (error) {
+      console.error(`Failed to index file ${file.path}:`, error);
+      throw error;
+    }
+  }
 
-	display(): void {
-		const {containerEl} = this;
+  /**
+   * Remove a file from the index
+   */
+  private async removeFromIndex(file: any): Promise<void> {
+    try {
+      await this.meilisearchService.deleteDocuments([file.path]);
+      console.log(`Removed file from index: ${file.path}`);
+    } catch (error) {
+      console.error(`Failed to remove file from index ${file.path}:`, error);
+      throw error;
+    }
+  }
 
-		containerEl.empty();
+  /**
+   * Open the search modal
+   */
+  openSearchModal(): void {
+    if (!this.meilisearchService.isInitialized()) {
+      showError('Meilisearch is not initialized. Check your settings.');
+      return;
+    }
 
-		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
-			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
-				.onChange(async (value) => {
-					this.plugin.settings.mySetting = value;
-					await this.plugin.saveSettings();
-				}));
-	}
+    new SearchModal(this.app, this.meilisearchService).open();
+  }
+
+  /**
+   * Force re-index all files
+   */
+  async forceReindex(): Promise<void> {
+    if (!this.meilisearchService.isInitialized()) {
+      throw new Error('Meilisearch is not initialized');
+    }
+
+    try {
+      await this.indexingService.fullIndex();
+    } catch (error) {
+      console.error('Force re-index failed:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Test connection to Meilisearch
+   */
+  async testConnection(): Promise<boolean> {
+    try {
+      return await this.meilisearchService.initialize();
+    } catch (error) {
+      console.error('Connection test failed:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Get current indexing status
+   */
+  getIndexingStatus(): string {
+    const { status, total, processed } = this.indexingProgress;
+    
+    if (status === 'idle') {
+      return 'Idle';
+    } else if (status === 'indexing') {
+      return `Indexing (${processed}/${total})`;
+    } else if (status === 'error') {
+      return `Error: ${this.indexingProgress.error || 'Unknown error'}`;
+    } else {
+      return status;
+    }
+  }
 }
