@@ -61,7 +61,7 @@ export default class MeilisearchPlugin extends Plugin {
         try {
             const success = await this.meilisearchService.initialize();
             if (!success) {
-                showError("Failed to initialize Meilisearch. Check your settings.");
+                showError("Failed to initialize Meilisearch");
             }
         } catch (error) {
             console.error("Failed to initialize Meilisearch:", error);
@@ -99,10 +99,8 @@ export default class MeilisearchPlugin extends Plugin {
             callback: async () => {
                 try {
                     const success = await this.testConnection();
-                    if (success) {
-                        showSuccess("Connection to Meilisearch successful!");
-                    } else {
-                        showError("Failed to connect to Meilisearch. Check your settings.");
+                    if (!success) {
+                        showError("Failed to connect to Meilisearch");
                     }
                 } catch (error) {
                     showError(`Connection test failed: ${error.message}`);
@@ -201,7 +199,7 @@ export default class MeilisearchPlugin extends Plugin {
      */
     openSearchModal(): void {
         if (!this.meilisearchService.isInitialized()) {
-            showError("Meilisearch is not initialized. Check your settings.");
+            showError("Meilisearch is not initialized");
             return;
         }
 

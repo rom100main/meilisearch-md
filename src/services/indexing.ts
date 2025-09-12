@@ -27,7 +27,7 @@ export class IndexingService {
      */
     async loadMetadata(): Promise<void> {
         try {
-            const adapter = this.app.vault.adapter;
+            const adapter = this.app.vault.adapter; // FIX: should use this.app.vault instead
             if (await adapter.exists(METADATA_FILENAME)) {
                 const metadataContent = await adapter.read(METADATA_FILENAME);
                 const metadataArray: FileMetadata[] = JSON.parse(metadataContent);
@@ -51,7 +51,7 @@ export class IndexingService {
             const metadataArray = Array.from(this.fileMetadata.values());
             const metadataContent = JSON.stringify(metadataArray, null, 2);
 
-            const adapter = this.app.vault.adapter;
+            const adapter = this.app.vault.adapter; // FIX: should use this.app.vault instead
             await adapter.write(METADATA_FILENAME, metadataContent);
         } catch (error) {
             console.error("Failed to save metadata:", error);
@@ -128,17 +128,14 @@ export class IndexingService {
 
             // Processes
             if (filesToDelete.length > 0) {
-                showNotice(`Removing ${filesToDelete.length} deleted files from index...`);
                 await this.meilisearchService.deleteDocuments(filesToDelete);
             }
 
             if (documentsToAdd.length > 0) {
-                showNotice(`Adding ${documentsToAdd.length} new files to index...`);
                 await this.meilisearchService.indexDocuments(documentsToAdd);
             }
 
             if (documentsToUpdate.length > 0) {
-                showNotice(`Updating ${documentsToUpdate.length} modified files in index...`);
                 await this.meilisearchService.indexDocuments(documentsToUpdate);
             }
 
@@ -213,7 +210,6 @@ export class IndexingService {
 
             // Index all documents
             if (documents.length > 0) {
-                showNotice(`Indexing ${documents.length} files...`);
                 await this.meilisearchService.indexDocuments(documents);
             }
 

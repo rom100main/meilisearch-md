@@ -1,6 +1,6 @@
 import { Meilisearch, Index, SearchResponse } from "meilisearch";
 import { MeilisearchSettings, DocumentData } from "../types";
-import { showError, showSuccess } from "../utils/notifications";
+import { showError } from "../utils/notifications";
 
 interface SearchOptions {
     limit?: number;
@@ -46,7 +46,6 @@ export class MeilisearchService {
 
             await this.configureSearchableAttributes();
 
-            showSuccess("Connected to Meilisearch successfully");
             return true;
         } catch (error) {
             console.error("Failed to initialize Meilisearch:", error);
@@ -142,7 +141,6 @@ export class MeilisearchService {
         try {
             const update = await this.index.deleteAllDocuments();
             await this.waitForTask(update.taskUid);
-            showSuccess("Index cleared successfully");
         } catch (error) {
             console.error("Failed to clear index:", error);
             throw error;

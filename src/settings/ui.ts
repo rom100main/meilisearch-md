@@ -71,7 +71,7 @@ export class MeilisearchSettingTab extends PluginSettingTab {
                             if (success) {
                                 showSuccess("Connection to Meilisearch successful!");
                             } else {
-                                showError("Failed to connect to Meilisearch. Check your settings.");
+                                showError("Failed to connect to Meilisearch");
                             }
                         } catch (error) {
                             showError(`Connection test failed: ${error.message}`);
