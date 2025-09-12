@@ -5,7 +5,7 @@ import { SearchModal } from "./src/modals/SearchModal";
 import { MeilisearchSettingTab } from "./src/settings/ui";
 import { MeilisearchSettings, IndexingProgress } from "./src/types";
 import { DEFAULT_SETTINGS } from "./src/settings";
-import { showError, showSuccess } from "./src/utils/notifications";
+import { showError } from "./src/utils/notifications";
 
 export default class MeilisearchPlugin extends Plugin {
     settings: MeilisearchSettings;
@@ -31,11 +31,13 @@ export default class MeilisearchPlugin extends Plugin {
 
         this.addSettingTab(new MeilisearchSettingTab(this.app, this));
 
-        if (this.settings.autoIndexOnStartup) {
-            await this.autoIndex();
-        }
+        this.app.workspace.onLayoutReady(async () => {
+            if (this.settings.autoIndexOnStartup) {
+                await this.autoIndex();
+            }
 
-        this.registerFileHandlers(); // for real-time indexing
+            this.registerFileHandlers(); // for real-time indexing
+        });
     }
 
     onunload() {
