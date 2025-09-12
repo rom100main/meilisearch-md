@@ -30,13 +30,11 @@ export class BasicSearchUI implements SearchUI {
   private setupEventListeners(): void {
     if (!this.inputEl || !this.props) return;
 
-    // Input event for search
     this.inputEl.addEventListener('input', (e) => {
       const query = (e.target as HTMLInputElement).value;
       this.props?.search(query);
     });
 
-    // Key events for navigation
     this.inputEl.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowDown') {
         e.preventDefault();
