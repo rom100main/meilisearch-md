@@ -27,6 +27,9 @@ export class BasicSearchUI implements SearchUI {
         this.inputEl.focus();
     }
 
+    /**
+     * Setup event listeners for search input
+     */
     private setupEventListeners(): void {
         if (!this.inputEl || !this.props) return;
 
@@ -58,6 +61,11 @@ export class BasicSearchUI implements SearchUI {
         this.renderResults();
     }
 
+    /**
+     * Get color for ranking score
+     * @param score - Ranking score (0 to 1)
+     * @returns RGB color string
+     */
     private getScoreColor(score: number): string {
         // Calculate RGB values for gradient from red (0%) to green (100%)
         // Red: (255, 0, 0) -> Green: (0, 255, 0)
@@ -66,6 +74,9 @@ export class BasicSearchUI implements SearchUI {
         return `rgb(${red}, ${green}, 0)`;
     }
 
+    /**
+     * Render search results in the UI
+     */
     private renderResults(): void {
         if (!this.resultsContainerEl) return;
 
@@ -127,18 +138,27 @@ export class BasicSearchUI implements SearchUI {
         });
     }
 
+    /**
+     * Select the next result in the list
+     */
     private selectNext(): void {
         if (this.results.length === 0) return;
         this.selectedIndex = Math.min(this.selectedIndex + 1, this.results.length - 1);
         this.updateSelection();
     }
 
+    /**
+     * Select the previous result in the list
+     */
     private selectPrevious(): void {
         if (this.results.length === 0) return;
         this.selectedIndex = Math.max(this.selectedIndex - 1, -1);
         this.updateSelection();
     }
 
+    /**
+     * Select the currently highlighted result
+     */
     private selectCurrent(): void {
         if (this.selectedIndex >= 0 && this.selectedIndex < this.results.length) {
             const result = this.results[this.selectedIndex];
@@ -146,6 +166,9 @@ export class BasicSearchUI implements SearchUI {
         }
     }
 
+    /**
+     * Update the visual selection in the results list
+     */
     private updateSelection(): void {
         if (!this.resultsContainerEl) return;
 

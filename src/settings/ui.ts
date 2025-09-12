@@ -14,10 +14,10 @@ export class MeilisearchSettingTab extends PluginSettingTab {
         const { containerEl } = this;
         containerEl.empty();
 
-        containerEl.createEl("h2", { text: "Meilisearch Settings" });
+        new Setting(containerEl).setName("Meilisearch server").setHeading();
 
         new Setting(containerEl)
-            .setName("Meilisearch Host URL")
+            .setName("Meilisearch host URL")
             .setDesc("The URL of your Meilisearch instance (e.g., http://localhost:7700)")
             .addText((text) =>
                 text
@@ -30,7 +30,7 @@ export class MeilisearchSettingTab extends PluginSettingTab {
             );
 
         new Setting(containerEl)
-            .setName("API Key")
+            .setName("API key")
             .setDesc("Optional API key for secured Meilisearch instances")
             .addText((text) =>
                 text
@@ -43,7 +43,7 @@ export class MeilisearchSettingTab extends PluginSettingTab {
             );
 
         new Setting(containerEl)
-            .setName("Index Name")
+            .setName("Index name")
             .setDesc("The name of the Meilisearch index to use for your vault")
             .addText((text) =>
                 text
@@ -56,17 +56,7 @@ export class MeilisearchSettingTab extends PluginSettingTab {
             );
 
         new Setting(containerEl)
-            .setName("Auto Index on Startup")
-            .setDesc("Automatically index new or modified files when the plugin loads")
-            .addToggle((toggle) =>
-                toggle.setValue(this.plugin.settings.autoIndexOnStartup).onChange(async (value) => {
-                    this.plugin.settings.autoIndexOnStartup = value;
-                    await this.plugin.saveSettings();
-                }),
-            );
-
-        new Setting(containerEl)
-            .setName("Test Connection")
+            .setName("Test connection")
             .setDesc("Test the connection to your Meilisearch instance")
             .addButton((button) =>
                 button
@@ -92,6 +82,18 @@ export class MeilisearchSettingTab extends PluginSettingTab {
                     }),
             );
 
+        new Setting(containerEl).setName("Indexing options").setHeading();
+
+        new Setting(containerEl)
+            .setName("Auto index on startup")
+            .setDesc("Automatically index new or modified files when the plugin loads")
+            .addToggle((toggle) =>
+                toggle.setValue(this.plugin.settings.autoIndexOnStartup).onChange(async (value) => {
+                    this.plugin.settings.autoIndexOnStartup = value;
+                    await this.plugin.saveSettings();
+                }),
+            );
+
         new Setting(containerEl)
             .setName("Force Re-index")
             .setDesc("Clear the index and re-index all files in your vault")
@@ -113,15 +115,6 @@ export class MeilisearchSettingTab extends PluginSettingTab {
                             button.setDisabled(false);
                         }
                     }),
-            );
-
-        new Setting(containerEl)
-            .setName("Open Search Modal")
-            .setDesc("Open the Meilisearch search modal to test your search")
-            .addButton((button) =>
-                button.setButtonText("Open Search").onClick(() => {
-                    this.plugin.openSearchModal();
-                }),
             );
     }
 }

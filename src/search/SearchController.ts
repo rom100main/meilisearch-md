@@ -81,6 +81,9 @@ export class SearchController {
         }, 300);
     }
 
+    /**
+     * Perform the search query using Meilisearch service
+     */
     private async performSearch(): Promise<void> {
         if (!this.meilisearchService.isInitialized() || this.isSearching) {
             return;

@@ -35,6 +35,11 @@ export class SearchModal extends Modal {
         this.contentEl.empty();
     }
 
+    /**
+     * Handle the event when a search result is selected
+     * @param path - The file path of the selected result
+     * @param modifiers - The modifier keys that were pressed
+     */
     private handleResultSelected(path: string, modifiers: Modifier[]): void {
         // Open the file in the current leaf or a new leaf if modifier is pressed
         const file = this.app.vault.getAbstractFileByPath(path);
