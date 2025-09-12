@@ -35,6 +35,7 @@ export interface SearchResult {
   path: string;
   content: string;
   frontmatter: Record<string, any>;
+  _rankingScore?: number;
   _formatted?: {
     name?: string;
     content?: string;

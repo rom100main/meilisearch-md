@@ -7,14 +7,10 @@ import type { SearchDatum } from '../search/SearchController';
 import type { Modifier } from 'obsidian';
 
 export class SearchModal extends Modal {
-  private plugin: MeilisearchPlugin;
-  private meilisearchService: MeilisearchService;
   private searchController: SearchController;
 
   constructor(plugin: MeilisearchPlugin, meilisearchService: MeilisearchService) {
     super(plugin.app);
-    this.plugin = plugin;
-    this.meilisearchService = meilisearchService;
 
     // Create the search UI and controller
     const searchUI = new BasicSearchUI();
@@ -22,10 +18,9 @@ export class SearchModal extends Modal {
       plugin,
       meilisearchService,
       searchUI,
-      { data: [] } // Initial empty data
+      { data: [] }
     );
 
-    // Set up callbacks
     this.searchController.onSubmit((data: SearchDatum, modifiers: Modifier[]) => {
       this.handleResultSelected(data, modifiers);
     });
@@ -37,22 +32,13 @@ export class SearchModal extends Modal {
 
   onOpen(): void {
     super.onOpen();
-    
-    // Add custom class for styling
-    this.modalEl.addClass('meilisearch-search-modal');
-    
-    // Remove the default title
-    this.titleEl.remove();
-    
-    // Create the search UI
-    this.searchController.create(this.contentEl, this.scope);
+    this.modalEl.addClass('meilisearch-search-modal'); // custom class for styling
+    this.titleEl.remove(); // remove the default title
+    this.searchController.create(this.contentEl, this.scope); // create the search UI
   }
 
   onClose(): void {
-    // Clean up the search controller
     this.searchController.destroy();
-    
-    // Clear the content
     this.contentEl.empty();
   }
 
@@ -65,7 +51,6 @@ export class SearchModal extends Modal {
       leaf.openFile(file);
     }
     
-    // Close the modal
     this.close();
   }
 }

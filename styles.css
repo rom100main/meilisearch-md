@@ -63,10 +63,31 @@
   color: var(--text-on-accent);
 }
 
+.meilisearch-result.selected .meilisearch-result-score {
+  color: var(--text-on-accent);
+  /*background-color: var(--background-modifier-error-hover) !important;*/
+}
+
+.meilisearch-result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
 .meilisearch-result-title {
   font-weight: 600;
-  margin-bottom: 4px;
   color: var(--text-normal);
+  flex-grow: 1;
+}
+
+.meilisearch-result-score {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-on-accent);
+  margin-left: 8px;
+  padding: 2px 6px;
+  border-radius: 4px;
 }
 
 .meilisearch-result-path {

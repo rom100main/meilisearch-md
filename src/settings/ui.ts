@@ -1,6 +1,5 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
 import MeilisearchPlugin from '../../main';
-import { MeilisearchSettings } from '../types';
 import { showSuccess, showError } from '../utils/notifications';
 
 export class MeilisearchSettingTab extends PluginSettingTab {
@@ -90,26 +89,6 @@ export class MeilisearchSettingTab extends PluginSettingTab {
           }
         }));
 
-    // Indexing Status
-    const indexingStatusEl = containerEl.createEl('div', { 
-      cls: 'meilisearch-indexing-status',
-      text: 'Indexing Status: Not initialized'
-    });
-
-    // Update indexing status
-    const updateIndexingStatus = () => {
-      const status = this.plugin.getIndexingStatus();
-      indexingStatusEl.setText(`Indexing Status: ${status}`);
-    };
-
-    // Update status every 2 seconds
-    const statusInterval = window.setInterval(updateIndexingStatus, 2000);
-    
-    // Note: Interval will be cleared when the settings tab is closed
-
-    // Initial status update
-    updateIndexingStatus();
-
     // Force Re-index Button
     new Setting(containerEl)
       .setName('Force Re-index')
@@ -141,16 +120,5 @@ export class MeilisearchSettingTab extends PluginSettingTab {
         .onClick(() => {
           this.plugin.openSearchModal();
         }));
-
-    // Add some styling
-    const styleEl = containerEl.createEl('style');
-    styleEl.setText(`
-      .meilisearch-indexing-status {
-        margin: 12px 0;
-        padding: 8px;
-        background-color: var(--background-secondary-alt);
-        border-radius: 4px;
-      }
-    `);
   }
 }

@@ -112,18 +112,17 @@ export class SearchController {
   search(s: string): void {
     this.searchQuery = s;
     
-    // Clear any existing timeout
     if (this.searchTimeout) {
       clearTimeout(this.searchTimeout);
     }
     
-    // If the query is empty, clear results
+    // If query empty, clear results
     if (!s.trim()) {
       this.ui.onSearchResults([]);
       return;
     }
     
-    // Debounce the search to avoid too many requests
+    // Debounce search to avoid too many requests
     this.searchTimeout = window.setTimeout(() => {
       this.performSearch();
     }, 300);
@@ -142,6 +141,7 @@ export class SearchController {
         attributesToHighlight: ['name', 'content'],
         attributesToCrop: ['content'],
         cropLength: 100,
+        showRankingScore: true,
       });
       
       // Transform Meilisearch results to our format

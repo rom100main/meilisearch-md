@@ -64,6 +64,14 @@ export class BasicSearchUI implements SearchUI {
     this.renderResults();
   }
 
+  private getScoreColor(score: number): string {
+    // Calculate RGB values for gradient from red (0%) to green (100%)
+    // Red: (255, 0, 0) -> Green: (0, 255, 0)
+    const red = Math.round(255 * (1 - score));
+    const green = Math.round(255 * score);
+    return `rgb(${red}, ${green}, 0)`;
+  }
+
   private renderResults(): void {
     if (!this.resultsContainerEl) return;
 
@@ -82,9 +90,24 @@ export class BasicSearchUI implements SearchUI {
         cls: 'meilisearch-result' + (index === this.selectedIndex ? ' selected' : ''),
       });
 
+      // Create result header container
+      const headerEl = resultEl.createDiv({ cls: 'meilisearch-result-header' });
+
       // Create title element
-      const titleEl = resultEl.createDiv({ cls: 'meilisearch-result-title' });
+      const titleEl = headerEl.createDiv({ cls: 'meilisearch-result-title' });
       titleEl.setText(result.data.name);
+
+      // Create ranking score element if available
+      if (result.data._rankingScore !== undefined) {
+        const scoreEl = headerEl.createDiv({ cls: 'meilisearch-result-score' });
+        // Format the score to 2 decimal places and display as percentage
+        const scorePercentage = (result.data._rankingScore * 100).toFixed(2);
+        scoreEl.setText(`${scorePercentage}%`);
+        
+        // Set background color based on score
+        const scoreColor = this.getScoreColor(result.data._rankingScore);
+        scoreEl.style.backgroundColor = scoreColor;
+      }
 
       // Create path element
       const pathEl = resultEl.createDiv({ cls: 'meilisearch-result-path' });

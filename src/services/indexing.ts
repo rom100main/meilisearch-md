@@ -1,4 +1,4 @@
-import { App, TFile, Vault } from 'obsidian';
+import { App } from 'obsidian';
 import { MeilisearchService } from './meilisearch';
 import { parseDocument } from './parser';
 import { DocumentData, FileMetadata, IndexingProgress } from '../types';
@@ -241,17 +241,6 @@ export class IndexingService {
       });
       showError(`Full indexing failed: ${error.message}`);
     }
-  }
-
-  /**
-   * Get the current indexing progress
-   */
-  getProgress(): IndexingProgress {
-    return {
-      total: 0,
-      processed: 0,
-      status: 'idle',
-    };
   }
 
   /**
