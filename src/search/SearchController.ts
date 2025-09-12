@@ -12,12 +12,6 @@ export interface SearchUIProps {
   onCancel: () => void;
 }
 
-export type FullSearchUIProps = SearchUIProps & {
-  prompt: string;
-  onSelectedElementChange?: (selected: SearchResult | undefined) => void;
-  cssClasses?: string;
-};
-
 export interface SearchUI {
   create(props: SearchUIProps): void;
   onSearchResults(results: SearchResult[]): void;
