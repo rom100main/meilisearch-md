@@ -21,12 +21,7 @@ export default class MeilisearchPlugin extends Plugin {
     await this.loadSettings();
 
     // Initialize services
-    this.meilisearchService = new MeilisearchService(
-      this.settings,
-      (progress: IndexingProgress) => {
-        this.indexingProgress = progress;
-      }
-    );
+    this.meilisearchService = new MeilisearchService(this.settings);
 
     this.indexingService = new IndexingService(
       this.app,
