@@ -16,7 +16,6 @@ export class MeilisearchSettingTab extends PluginSettingTab {
 
     containerEl.createEl('h2', { text: 'Meilisearch Settings' });
 
-    // Meilisearch Host URL
     new Setting(containerEl)
       .setName('Meilisearch Host URL')
       .setDesc('The URL of your Meilisearch instance (e.g., http://localhost:7700)')
@@ -28,7 +27,6 @@ export class MeilisearchSettingTab extends PluginSettingTab {
           await this.plugin.saveSettings();
         }));
 
-    // API Key
     new Setting(containerEl)
       .setName('API Key')
       .setDesc('Optional API key for secured Meilisearch instances')
@@ -40,7 +38,6 @@ export class MeilisearchSettingTab extends PluginSettingTab {
           await this.plugin.saveSettings();
         }));
 
-    // Index Name
     new Setting(containerEl)
       .setName('Index Name')
       .setDesc('The name of the Meilisearch index to use for your vault')
@@ -52,7 +49,6 @@ export class MeilisearchSettingTab extends PluginSettingTab {
           await this.plugin.saveSettings();
         }));
 
-    // Auto Index on Startup
     new Setting(containerEl)
       .setName('Auto Index on Startup')
       .setDesc('Automatically index new or modified files when the plugin loads')
@@ -63,7 +59,6 @@ export class MeilisearchSettingTab extends PluginSettingTab {
           await this.plugin.saveSettings();
         }));
 
-    // Connection Test Button
     new Setting(containerEl)
       .setName('Test Connection')
       .setDesc('Test the connection to your Meilisearch instance')
@@ -89,7 +84,6 @@ export class MeilisearchSettingTab extends PluginSettingTab {
           }
         }));
 
-    // Force Re-index Button
     new Setting(containerEl)
       .setName('Force Re-index')
       .setDesc('Clear the index and re-index all files in your vault')
@@ -111,7 +105,6 @@ export class MeilisearchSettingTab extends PluginSettingTab {
           }
         }));
 
-    // Open Search Modal Button
     new Setting(containerEl)
       .setName('Open Search Modal')
       .setDesc('Open the Meilisearch search modal to test your search')

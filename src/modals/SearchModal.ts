@@ -12,7 +12,6 @@ export class SearchModal extends Modal {
   constructor(plugin: MeilisearchPlugin, meilisearchService: MeilisearchService) {
     super(plugin.app);
 
-    // Create the search UI and controller
     const searchUI = new BasicSearchUI();
     this.searchController = new SearchController(
       plugin,

@@ -80,7 +80,6 @@ export class IndexingService {
       const filesToDelete: string[] = [];
       let processed = 0;
 
-      // Check for new or modified files
       for (const file of files) {
         this.updateProgress({ 
           total: files.length, 
@@ -127,25 +126,22 @@ export class IndexingService {
         }
       }
 
-      // Process deletions first
+      // Processes
       if (filesToDelete.length > 0) {
         showNotice(`Removing ${filesToDelete.length} deleted files from index...`);
         await this.meilisearchService.deleteDocuments(filesToDelete);
       }
 
-      // Process new files
       if (documentsToAdd.length > 0) {
         showNotice(`Adding ${documentsToAdd.length} new files to index...`);
         await this.meilisearchService.indexDocuments(documentsToAdd);
       }
 
-      // Process modified files
       if (documentsToUpdate.length > 0) {
         showNotice(`Updating ${documentsToUpdate.length} modified files in index...`);
         await this.meilisearchService.indexDocuments(documentsToUpdate);
       }
 
-      // Save updated metadata
       await this.saveMetadata();
 
       this.updateProgress({ 
@@ -180,10 +176,8 @@ export class IndexingService {
     showNotice('Starting full indexing...');
 
     try {
-      // Clear the existing index
+      // Clear the existing index and metadata
       await this.meilisearchService.clearIndex();
-      
-      // Clear metadata
       this.fileMetadata.clear();
 
       const files = this.app.vault.getMarkdownFiles();
@@ -221,7 +215,6 @@ export class IndexingService {
         await this.meilisearchService.indexDocuments(documents);
       }
 
-      // Save metadata
       await this.saveMetadata();
 
       this.updateProgress({ 

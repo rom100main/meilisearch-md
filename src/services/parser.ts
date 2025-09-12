@@ -12,16 +12,13 @@ export function parseDocument(file: TFile, content: string): DocumentData {
   const name = file.basename;
   const path = file.path;
   
-  // Extract frontmatter and content
   let frontmatter: Record<string, any> = {};
   let contentWithoutFrontmatter = content;
   
-  // Check if content starts with frontmatter delimiter
   const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
   const match = content.match(frontmatterRegex);
   
   if (match && match.length === 3) {
-    // Parse YAML frontmatter
     const frontmatterContent = match[1];
     contentWithoutFrontmatter = match[2];
     
@@ -39,7 +36,7 @@ export function parseDocument(file: TFile, content: string): DocumentData {
   const sanitizedId = path.replace(/[^a-zA-Z0-9-_]/g, '_');
   
   return {
-    id: sanitizedId, // Use sanitized path as unique ID
+    id: sanitizedId,
     name,
     path,
     frontmatter,

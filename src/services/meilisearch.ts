@@ -6,11 +6,9 @@ export class MeilisearchService {
   private client: Meilisearch | null = null;
   private index: Index | null = null;
   private settings: MeilisearchSettings;
-  private progressCallback?: (progress: IndexingProgress) => void;
 
-  constructor(settings: MeilisearchSettings, progressCallback?: (progress: IndexingProgress) => void) {
+  constructor(settings: MeilisearchSettings) {
     this.settings = settings;
-    this.progressCallback = progressCallback;
   }
 
   /**
@@ -23,11 +21,9 @@ export class MeilisearchService {
         apiKey: this.settings.apiKey || undefined,
       });
 
-      // Test connection by getting health status
       const health = await this.client.health();
       console.log('Meilisearch health status:', health.status);
 
-      // Get or create index
       this.index = this.client.index(this.settings.indexName);
       
       // Check if index exists, if not create it
@@ -40,7 +36,6 @@ export class MeilisearchService {
         console.log(`Index '${this.settings.indexName}' created`);
       }
 
-      // Configure searchable attributes
       await this.configureSearchableAttributes();
       
       showSuccess('Connected to Meilisearch successfully');
@@ -79,8 +74,6 @@ export class MeilisearchService {
     try {
       const update = await this.index.addDocuments(documents);
       console.log(`Documents indexed with task ID: ${update.taskUid}`);
-      
-      // Wait for the task to complete
       await this.waitForTask(update.taskUid);
     } catch (error) {
       console.error('Failed to index documents:', error);
@@ -100,8 +93,6 @@ export class MeilisearchService {
     try {
       const update = await this.index.deleteDocuments(documentIds);
       console.log(`Documents deleted with task ID: ${update.taskUid}`);
-      
-      // Wait for the task to complete
       await this.waitForTask(update.taskUid);
     } catch (error) {
       console.error('Failed to delete documents:', error);
@@ -147,7 +138,6 @@ export class MeilisearchService {
       const update = await this.index.deleteAllDocuments();
       console.log(`Index cleared with task ID: ${update.taskUid}`);
       
-      // Wait for the task to complete
       await this.waitForTask(update.taskUid);
       
       showSuccess('Index cleared successfully');
