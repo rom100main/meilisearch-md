@@ -20,8 +20,8 @@ export default class MeilisearchPlugin extends Plugin {
   async onload() {
     await this.loadSettings();
 
-    // Initialize services
     this.meilisearchService = new MeilisearchService(this.settings);
+    await this.initializeMeilisearch();
 
     this.indexingService = new IndexingService(
       this.app,
@@ -31,26 +31,18 @@ export default class MeilisearchPlugin extends Plugin {
       }
     );
 
-    // Initialize Meilisearch connection
-    await this.initializeMeilisearch();
-
-    // Register commands
     this.addCommands();
 
-    // Register settings tab
     this.addSettingTab(new MeilisearchSettingTab(this.app, this));
 
-    // Auto-index on startup if enabled
     if (this.settings.autoIndexOnStartup) {
       await this.autoIndex();
     }
 
-    // Register file event handlers for real-time indexing
-    this.registerFileHandlers();
+    this.registerFileHandlers(); // for real-time indexing
   }
 
   onunload() {
-    // Cleanup will be handled automatically by Obsidian
     console.log('Meilisearch plugin unloaded');
   }
 
@@ -61,7 +53,6 @@ export default class MeilisearchPlugin extends Plugin {
   async saveSettings() {
     await this.saveData(this.settings);
     
-    // Update Meilisearch service with new settings
     if (this.meilisearchService) {
       this.meilisearchService.updateSettings(this.settings);
     }
@@ -86,19 +77,17 @@ export default class MeilisearchPlugin extends Plugin {
    * Register plugin commands
    */
   private addCommands(): void {
-    // Search command
     this.addCommand({
       id: 'meilisearch-search',
-      name: 'Search with Meilisearch',
+      name: 'Search',
       callback: () => {
         this.openSearchModal();
       },
     });
 
-    // Force re-index command
     this.addCommand({
       id: 'meilisearch-force-reindex',
-      name: 'Force re-index with Meilisearch',
+      name: 'Force re-index',
       callback: async () => {
         try {
           await this.forceReindex();
@@ -108,10 +97,9 @@ export default class MeilisearchPlugin extends Plugin {
       },
     });
 
-    // Test connection command
     this.addCommand({
       id: 'meilisearch-test-connection',
-      name: 'Test Meilisearch connection',
+      name: 'Test connection',
       callback: async () => {
         try {
           const success = await this.testConnection();
@@ -131,12 +119,10 @@ export default class MeilisearchPlugin extends Plugin {
    * Register file event handlers for real-time indexing
    */
   private registerFileHandlers(): void {
-    // Handle file creation
     this.registerEvent(
       this.app.vault.on('create', async (file) => {
         if (this.meilisearchService.isInitialized() && file instanceof TFile && file.extension === 'md') {
-          // Add a small delay to ensure the file is fully written
-          setTimeout(async () => {
+          setTimeout(async () => { // ensure the file is fully written
             try {
               const content = await this.app.vault.read(file);
               await this.indexFile(file, content);
@@ -148,7 +134,6 @@ export default class MeilisearchPlugin extends Plugin {
       })
     );
 
-    // Handle file modification
     this.registerEvent(
       this.app.vault.on('modify', async (file) => {
         if (this.meilisearchService.isInitialized() && file instanceof TFile && file.extension === 'md') {
@@ -162,7 +147,6 @@ export default class MeilisearchPlugin extends Plugin {
       })
     );
 
-    // Handle file deletion
     this.registerEvent(
       this.app.vault.on('delete', async (file) => {
         if (this.meilisearchService.isInitialized() && file instanceof TFile && file.extension === 'md') {
@@ -181,10 +165,7 @@ export default class MeilisearchPlugin extends Plugin {
    */
   private async autoIndex(): Promise<void> {
     try {
-      // Load metadata first
       await this.indexingService.loadMetadata();
-      
-      // Perform incremental indexing
       await this.indexingService.incrementalIndex();
     } catch (error) {
       console.error('Auto-indexing failed:', error);
@@ -197,11 +178,9 @@ export default class MeilisearchPlugin extends Plugin {
    */
   private async indexFile(file: any, content: string): Promise<void> {
     try {
-      // Parse the document
       const { parseDocument } = await import('./src/services/parser');
       const document = parseDocument(file, content);
       
-      // Index the document
       await this.meilisearchService.indexDocuments([document]);
       
       console.log(`Indexed file: ${file.path}`);
