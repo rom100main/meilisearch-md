@@ -13,7 +13,6 @@ export class BasicSearchUI implements SearchUI {
     this.props = props;
     const { targetEl } = props;
 
-    // Create input element
     const inputContainer = targetEl.createDiv({ cls: 'meilisearch-input-container' });
     this.inputEl = inputContainer.createEl('input', {
       type: 'text',
@@ -21,13 +20,10 @@ export class BasicSearchUI implements SearchUI {
       placeholder: 'Search your vault...',
     });
 
-    // Create results container
     this.resultsContainerEl = targetEl.createDiv({ cls: 'meilisearch-results-container' });
 
-    // Set up event listeners
     this.setupEventListeners();
 
-    // Focus the input
     this.inputEl.focus();
   }
 
@@ -90,26 +86,21 @@ export class BasicSearchUI implements SearchUI {
         cls: 'meilisearch-result' + (index === this.selectedIndex ? ' selected' : ''),
       });
 
-      // Create result header container
       const headerEl = resultEl.createDiv({ cls: 'meilisearch-result-header' });
 
-      // Create title element
       const titleEl = headerEl.createDiv({ cls: 'meilisearch-result-title' });
       titleEl.setText(result.data.name);
 
       // Create ranking score element if available
       if (result.data._rankingScore !== undefined) {
         const scoreEl = headerEl.createDiv({ cls: 'meilisearch-result-score' });
-        // Format the score to 2 decimal places and display as percentage
         const scorePercentage = (result.data._rankingScore * 100).toFixed(2);
         scoreEl.setText(`${scorePercentage}%`);
         
-        // Set background color based on score
         const scoreColor = this.getScoreColor(result.data._rankingScore);
         scoreEl.style.backgroundColor = scoreColor;
       }
 
-      // Create path element
       const pathEl = resultEl.createDiv({ cls: 'meilisearch-result-path' });
       pathEl.setText(result.data.path);
 
@@ -117,7 +108,6 @@ export class BasicSearchUI implements SearchUI {
       if (result.data.content) {
         const contentEl = resultEl.createDiv({ cls: 'meilisearch-result-content' });
         
-        // Truncate content to a reasonable length
         const maxContentLength = 150;
         let contentPreview = result.data.content.substring(0, maxContentLength);
         if (result.data.content.length > maxContentLength) {
@@ -127,13 +117,11 @@ export class BasicSearchUI implements SearchUI {
         contentEl.setText(contentPreview);
       }
 
-      // Add click handler
       resultEl.addEventListener('click', () => {
         this.selectedIndex = index;
         this.selectCurrent();
       });
 
-      // Add hover handler
       resultEl.addEventListener('mouseenter', () => {
         this.selectedIndex = index;
         this.updateSelection();
@@ -167,7 +155,6 @@ export class BasicSearchUI implements SearchUI {
     resultEls.forEach((el, index) => {
       if (index === this.selectedIndex) {
         el.addClass('selected');
-        // Scroll into view if needed
         el.scrollIntoView({ block: 'nearest' });
       } else {
         el.removeClass('selected');
