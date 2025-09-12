@@ -176,7 +176,7 @@ export default class MeilisearchPlugin extends Plugin {
   /**
    * Index a single file
    */
-  private async indexFile(file: any, content: string): Promise<void> {
+  private async indexFile(file: TFile, content: string): Promise<void> {
     try {
       const { parseDocument } = await import('./src/services/parser');
       const document = parseDocument(file, content);
@@ -193,7 +193,7 @@ export default class MeilisearchPlugin extends Plugin {
   /**
    * Remove a file from the index
    */
-  private async removeFromIndex(file: any): Promise<void> {
+  private async removeFromIndex(file: TFile): Promise<void> {
     try {
       await this.meilisearchService.deleteDocuments([file.path]);
       console.log(`Removed file from index: ${file.path}`);

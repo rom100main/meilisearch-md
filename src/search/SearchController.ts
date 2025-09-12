@@ -98,7 +98,7 @@ export class SearchController {
       });
       
       // Transform Meilisearch results to our format
-      const searchResults: SearchResult[] = result.hits.map((hit: any) => {
+      const searchResults: SearchResult[] = result.hits.map((hit: SearchResult) => {
         return {
           id: hit.id,
           name: hit.name,

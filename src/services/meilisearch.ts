@@ -1,6 +1,15 @@
-import { Meilisearch, Index } from 'meilisearch';
-import { MeilisearchSettings } from '../types';
+import { Meilisearch, Index, SearchResponse } from 'meilisearch';
+import { MeilisearchSettings, DocumentData } from '../types';
 import { showError, showSuccess } from '../utils/notifications';
+
+interface SearchOptions {
+  limit?: number;
+  attributesToHighlight?: string[];
+  attributesToCrop?: string[];
+  cropLength?: number;
+  showRankingScore?: boolean;
+  [key: string]: unknown;
+}
 
 export class MeilisearchService {
   private client: Meilisearch | null = null;
@@ -66,7 +75,7 @@ export class MeilisearchService {
    * Add or update documents in the index
    * @param documents Array of documents to index
    */
-  async indexDocuments(documents: any[]): Promise<void> {
+  async indexDocuments(documents: DocumentData[]): Promise<void> {
     if (!this.index) {
       throw new Error('Meilisearch index not initialized');
     }
@@ -105,7 +114,7 @@ export class MeilisearchService {
    * @param query The search query
    * @param options Additional search options
    */
-  async search(query: string, options: any = {}): Promise<any> {
+  async search(query: string, options: SearchOptions = {}): Promise<SearchResponse> {
     if (!this.index) {
       throw new Error('Meilisearch index not initialized');
     }

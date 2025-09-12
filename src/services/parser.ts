@@ -12,7 +12,7 @@ export function parseDocument(file: TFile, content: string): DocumentData {
   const name = file.basename;
   const path = file.path;
   
-  let frontmatter: Record<string, any> = {};
+  let frontmatter: Record<string, unknown> = {};
   let contentWithoutFrontmatter = content;
   
   const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;

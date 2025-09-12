@@ -9,7 +9,7 @@ export interface DocumentData {
   id: string;
   name: string;
   path: string;
-  frontmatter: Record<string, any>;
+  frontmatter: Record<string, unknown>;
   content: string;
   hash: string;
 }
@@ -34,11 +34,11 @@ export interface SearchResult {
   name: string;
   path: string;
   content: string;
-  frontmatter: Record<string, any>;
+  frontmatter: Record<string, unknown>;
   _rankingScore?: number;
   _formatted?: {
     name?: string;
     content?: string;
-    frontmatter?: Record<string, any>;
+    frontmatter?: Record<string, unknown>;
   };
 }
