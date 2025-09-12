@@ -1,5 +1,5 @@
 import { Meilisearch, Index } from 'meilisearch';
-import { MeilisearchSettings, IndexingProgress } from '../types';
+import { MeilisearchSettings } from '../types';
 import { showError, showSuccess } from '../utils/notifications';
 
 export class MeilisearchService {
@@ -30,7 +30,7 @@ export class MeilisearchService {
       try {
         await this.index.getStats();
         console.log(`Index '${this.settings.indexName}' exists`);
-      } catch (error) {
+      } catch {
         console.log(`Index '${this.settings.indexName}' does not exist, creating it...`);
         await this.client.createIndex(this.settings.indexName, { primaryKey: 'id' });
         console.log(`Index '${this.settings.indexName}' created`);

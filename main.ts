@@ -1,11 +1,11 @@
-import { App, Plugin, TFile } from 'obsidian';
+import { Plugin, TFile } from 'obsidian';
 import { MeilisearchService } from './src/services/meilisearch';
 import { IndexingService } from './src/services/indexing';
 import { SearchModal } from './src/modals/SearchModal';
 import { MeilisearchSettingTab } from './src/settings/ui';
 import { MeilisearchSettings, IndexingProgress } from './src/types';
 import { DEFAULT_SETTINGS } from './src/settings';
-import { showNotice, showError, showSuccess } from './src/utils/notifications';
+import { showError, showSuccess } from './src/utils/notifications';
 
 export default class MeilisearchPlugin extends Plugin {
   settings: MeilisearchSettings;
