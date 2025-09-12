@@ -39,7 +39,7 @@ export default class MeilisearchPlugin extends Plugin {
     }
 
     onunload() {
-        console.log("Meilisearch plugin unloaded");
+        // Cleanup if necessary
     }
 
     async loadSettings() {

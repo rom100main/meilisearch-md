@@ -30,19 +30,14 @@ export class MeilisearchService {
                 apiKey: this.settings.apiKey || undefined,
             });
 
-            const health = await this.client.health();
-            console.log("Meilisearch health status:", health.status);
-
             this.index = this.client.index(this.settings.indexName);
 
             // Check if index exists, if not create it
             try {
                 await this.index.getStats();
-                console.log(`Index '${this.settings.indexName}' exists`);
             } catch {
-                console.log(`Index '${this.settings.indexName}' does not exist, creating it...`);
+                console.log(`Index '${this.settings.indexName}' does not exist, create it`);
                 await this.client.createIndex(this.settings.indexName, { primaryKey: "id" });
-                console.log(`Index '${this.settings.indexName}' created`);
             }
 
             await this.configureSearchableAttributes();
@@ -65,7 +60,6 @@ export class MeilisearchService {
         try {
             await this.index.updateSearchableAttributes(["name", "content", "frontmatter"]);
             await this.index.updateFilterableAttributes(["path"]);
-            console.log("Searchable attributes configured");
         } catch (error) {
             console.error("Failed to configure searchable attributes:", error);
         }
@@ -145,10 +139,7 @@ export class MeilisearchService {
 
         try {
             const update = await this.index.deleteAllDocuments();
-            console.log(`Index cleared with task ID: ${update.taskUid}`);
-
             await this.waitForTask(update.taskUid);
-
             showSuccess("Index cleared successfully");
         } catch (error) {
             console.error("Failed to clear index:", error);
@@ -171,7 +162,6 @@ export class MeilisearchService {
                 const task = await this.client.tasks.getTask(taskUid);
 
                 if (task.status === "succeeded") {
-                    console.log(`Task ${taskUid} completed successfully`);
                     return;
                 } else if (task.status === "failed") {
                     console.error(`Task ${taskUid} failed:`, task.error);
