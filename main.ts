@@ -177,10 +177,7 @@ export default class MeilisearchPlugin extends Plugin {
         try {
             const { parseDocument } = await import("./src/services/parser");
             const document = parseDocument(file, content);
-
             await this.meilisearchService.indexDocuments([document]);
-
-            console.log(`Indexed file: ${file.path}`);
         } catch (error) {
             console.error(`Failed to index file ${file.path}:`, error);
             throw error;
@@ -193,7 +190,6 @@ export default class MeilisearchPlugin extends Plugin {
     private async removeFromIndex(file: TFile): Promise<void> {
         try {
             await this.meilisearchService.deleteDocuments([file.path]);
-            console.log(`Removed file from index: ${file.path}`);
         } catch (error) {
             console.error(`Failed to remove file from index ${file.path}:`, error);
             throw error;

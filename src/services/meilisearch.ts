@@ -36,8 +36,12 @@ export class MeilisearchService {
             try {
                 await this.index.getStats();
             } catch {
-                console.log(`Index '${this.settings.indexName}' does not exist, create it`);
-                await this.client.createIndex(this.settings.indexName, { primaryKey: "id" });
+                try {
+                    await this.client.createIndex(this.settings.indexName, { primaryKey: "id" });
+                } catch (error) {
+                    console.error("Failed to create Meilisearch index:", error);
+                    throw error;
+                }
             }
 
             await this.configureSearchableAttributes();
@@ -76,7 +80,6 @@ export class MeilisearchService {
 
         try {
             const update = await this.index.addDocuments(documents);
-            console.log(`Documents indexed with task ID: ${update.taskUid}`);
             await this.waitForTask(update.taskUid);
         } catch (error) {
             console.error("Failed to index documents:", error);
@@ -95,7 +98,6 @@ export class MeilisearchService {
 
         try {
             const update = await this.index.deleteDocuments(documentIds);
-            console.log(`Documents deleted with task ID: ${update.taskUid}`);
             await this.waitForTask(update.taskUid);
         } catch (error) {
             console.error("Failed to delete documents:", error);

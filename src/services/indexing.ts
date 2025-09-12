@@ -36,8 +36,6 @@ export class IndexingService {
                 metadataArray.forEach((metadata) => {
                     this.fileMetadata.set(metadata.path, metadata);
                 });
-
-                console.log(`Loaded metadata for ${this.fileMetadata.size} files`);
             }
         } catch (error) {
             console.error("Failed to load metadata:", error);
@@ -55,8 +53,6 @@ export class IndexingService {
 
             const adapter = this.app.vault.adapter;
             await adapter.write(METADATA_FILENAME, metadataContent);
-
-            console.log(`Saved metadata for ${metadataArray.length} files`);
         } catch (error) {
             console.error("Failed to save metadata:", error);
             showError(`Failed to save metadata: ${error.message}`);
