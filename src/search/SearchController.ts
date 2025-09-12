@@ -3,37 +3,12 @@ import type MeilisearchPlugin from '../../main';
 import { SearchResult } from '../types';
 import { MeilisearchService } from '../services/meilisearch';
 
-export interface SearchData {
-  data: SearchDatum[];
-}
-
-export interface SearchDatum {
-  /**
-   * The text that the search acts on.
-   */
-  content: string;
-  /**
-   * Smaller text to display below the highlighted content.
-   * This is not used in the search.
-   */
-  subText?: string;
-  /**
-   * Used to display the keyboard shortcut in the command palette.
-   */
-  hotKeys?: string[];
-  /**
-   * Some extra data associated with the search datum.
-   * This is passed to the `onSubmit` callback when the user selects the search datum.
-   */
-  data: SearchResult;
-}
-
 export interface SearchUIProps {
   plugin: MeilisearchPlugin;
   targetEl: HTMLElement;
   scope: Scope;
   search: (s: string) => void;
-  onSubmit: (data: SearchDatum, modifiers: Modifier[]) => void;
+  onSubmit: (path: string, modifiers: Modifier[]) => void;
   onCancel: () => void;
 }
 
@@ -53,25 +28,23 @@ export class SearchController {
   plugin: MeilisearchPlugin;
   meilisearchService: MeilisearchService;
   targetEl?: HTMLElement;
-  onSubmitCBs: ((data: SearchDatum, modifiers: Modifier[]) => void)[];
+  onSubmitCBs: ((path: string, modifiers: Modifier[]) => void)[];
   onCancelCBs: (() => void)[];
-  data: SearchData;
   ui: SearchUI;
 
   searchQuery: string = '';
   searchTimeout: number | null = null;
   isSearching: boolean = false;
 
-  constructor(plugin: MeilisearchPlugin, meilisearchService: MeilisearchService, ui: SearchUI, data: SearchData) {
+  constructor(plugin: MeilisearchPlugin, meilisearchService: MeilisearchService, ui: SearchUI) {
     this.plugin = plugin;
     this.meilisearchService = meilisearchService;
     this.onSubmitCBs = [];
     this.onCancelCBs = [];
-    this.data = data;
     this.ui = ui;
   }
 
-  onSubmit(cb: (data: SearchDatum, modifiers: Modifier[]) => void): void {
+  onSubmit(cb: (path: string, modifiers: Modifier[]) => void): void {
     this.onSubmitCBs.push(cb);
   }
 
@@ -86,8 +59,8 @@ export class SearchController {
       targetEl: this.targetEl,
       scope,
       search: (s: string) => this.search(s),
-      onSubmit: (data: SearchDatum, modifiers: Modifier[]) => {
-        this.onSubmitCBs.forEach(cb => cb(data, modifiers));
+      onSubmit: (path: string, modifiers: Modifier[]) => {
+        this.onSubmitCBs.forEach(cb => cb(path, modifiers));
       },
       onCancel: () => {
         this.onCancelCBs.forEach(cb => cb());

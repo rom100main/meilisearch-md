@@ -3,7 +3,6 @@ import type MeilisearchPlugin from '../../main';
 import { SearchController } from '../search/SearchController';
 import { BasicSearchUI } from '../search/BasicSearchUI';
 import { MeilisearchService } from '../services/meilisearch';
-import type { SearchDatum } from '../search/SearchController';
 import type { Modifier } from 'obsidian';
 
 export class SearchModal extends Modal {
@@ -16,12 +15,11 @@ export class SearchModal extends Modal {
     this.searchController = new SearchController(
       plugin,
       meilisearchService,
-      searchUI,
-      { data: [] }
+      searchUI
     );
 
-    this.searchController.onSubmit((data: SearchDatum, modifiers: Modifier[]) => {
-      this.handleResultSelected(data, modifiers);
+    this.searchController.onSubmit((path: string, modifiers: Modifier[]) => {
+      this.handleResultSelected(path, modifiers);
     });
 
     this.searchController.onCancel(() => {
@@ -41,9 +39,9 @@ export class SearchModal extends Modal {
     this.contentEl.empty();
   }
 
-  private handleResultSelected(data: SearchDatum, modifiers: Modifier[]): void {
+  private handleResultSelected(path: string, modifiers: Modifier[]): void {
     // Open the file in the current leaf or a new leaf if modifier is pressed
-    const file = this.app.vault.getAbstractFileByPath(data.data.path);
+    const file = this.app.vault.getAbstractFileByPath(path);
 
     if (file && file instanceof TFile) {
       const leaf = this.app.workspace.getLeaf(modifiers.includes('Mod'));

@@ -1,4 +1,4 @@
-import type { SearchUIProps, SearchDatum } from './SearchController';
+import type { SearchUIProps } from './SearchController';
 import type { SearchResult } from '../types';
 import type { SearchUI } from './SearchController';
 
@@ -142,12 +142,7 @@ export class BasicSearchUI implements SearchUI {
   private selectCurrent(): void {
     if (this.selectedIndex >= 0 && this.selectedIndex < this.results.length) {
       const result = this.results[this.selectedIndex];
-      const searchDatum: SearchDatum = {
-        content: result.content,
-        subText: result.path,
-        data: result,
-      };
-      this.props?.onSubmit(searchDatum, []);
+      this.props?.onSubmit(result.path, []);
     }
   }
 
