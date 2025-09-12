@@ -28,20 +28,6 @@ export interface SearchDatum {
   data: SearchResult;
 }
 
-export interface HighlightSegment {
-  // text
-  t: string;
-  // whether the text is highlighted
-  h: boolean;
-}
-
-/**
- * A search datum with highlights.
- */
-export type SearchResultDatum = SearchDatum & {
-  highlights?: HighlightSegment[];
-};
-
 export interface SearchUIProps {
   plugin: MeilisearchPlugin;
   targetEl: HTMLElement;
@@ -59,7 +45,7 @@ export type FullSearchUIProps = SearchUIProps & {
 
 export interface SearchUI {
   create(props: SearchUIProps): void;
-  onSearchResults(results: SearchResultDatum[]): void;
+  onSearchResults(results: SearchResult[]): void;
   destroy(): void;
 }
 
@@ -145,41 +131,15 @@ export class SearchController {
       });
       
       // Transform Meilisearch results to our format
-      const searchResults: SearchResultDatum[] = result.hits.map((hit: any) => {
-        const highlights: HighlightSegment[] = [];
-        
-        // Process name highlights
-        if (hit._formatted?.name) {
-          // Extract highlighted segments from formatted name
-          const nameText = hit._formatted.name;
-          // Simple regex to find highlighted segments
-          const highlightedMatches = nameText.match(/<em>(.*?)<\/em>/g);
-          if (highlightedMatches) {
-            highlightedMatches.forEach((match: string) => {
-              const text = match.replace(/<em>|<\/em>/g, '');
-              highlights.push({ t: text, h: true });
-            });
-          }
-        }
-        
-        // Process content highlights
-        if (hit._formatted?.content) {
-          // Extract highlighted segments from formatted content
-          const contentText = hit._formatted.content;
-          const highlightedMatches = contentText.match(/<em>(.*?)<\/em>/g);
-          if (highlightedMatches) {
-            highlightedMatches.forEach((match: string) => {
-              const text = match.replace(/<em>|<\/em>/g, '');
-              highlights.push({ t: text, h: true });
-            });
-          }
-        }
-        
+      const searchResults: SearchResult[] = result.hits.map((hit: any) => {
         return {
-          content: `${hit.name} ${hit.content}`,
-          subText: hit.path,
-          data: hit,
-          highlights: highlights.length > 0 ? highlights : undefined,
+          id: hit.id,
+          name: hit.name,
+          path: hit.path,
+          content: hit.content,
+          frontmatter: hit.frontmatter || {},
+          _rankingScore: hit._rankingScore,
+          _formatted: hit._formatted,
         };
       });
       

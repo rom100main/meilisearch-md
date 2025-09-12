@@ -1,11 +1,11 @@
-import { MarkdownRenderer, Setting } from 'obsidian';
-import type { SearchResultDatum, SearchUIProps } from './SearchController';
+import type { SearchUIProps, SearchDatum } from './SearchController';
+import type { SearchResult } from '../types';
 import type { SearchUI } from './SearchController';
 
 export class BasicSearchUI implements SearchUI {
   private inputEl?: HTMLInputElement;
   private resultsContainerEl?: HTMLElement;
-  private results: SearchResultDatum[] = [];
+  private results: SearchResult[] = [];
   private selectedIndex: number = -1;
   private props?: SearchUIProps;
 
@@ -52,7 +52,7 @@ export class BasicSearchUI implements SearchUI {
     });
   }
 
-  onSearchResults(results: SearchResultDatum[]): void {
+  onSearchResults(results: SearchResult[]): void {
     this.results = results;
     this.selectedIndex = -1;
     this.renderResults();
@@ -87,28 +87,28 @@ export class BasicSearchUI implements SearchUI {
       const headerEl = resultEl.createDiv({ cls: 'meilisearch-result-header' });
 
       const titleEl = headerEl.createDiv({ cls: 'meilisearch-result-title' });
-      titleEl.setText(result.data.name);
+      titleEl.setText(result.name);
 
       // Create ranking score element if available
-      if (result.data._rankingScore !== undefined) {
+      if (result._rankingScore !== undefined) {
         const scoreEl = headerEl.createDiv({ cls: 'meilisearch-result-score' });
-        const scorePercentage = (result.data._rankingScore * 100).toFixed(2);
+        const scorePercentage = (result._rankingScore * 100).toFixed(2);
         scoreEl.setText(`${scorePercentage}%`);
         
-        const scoreColor = this.getScoreColor(result.data._rankingScore);
+        const scoreColor = this.getScoreColor(result._rankingScore);
         scoreEl.style.backgroundColor = scoreColor;
       }
 
       const pathEl = resultEl.createDiv({ cls: 'meilisearch-result-path' });
-      pathEl.setText(result.data.path);
+      pathEl.setText(result.path);
 
       // Create content preview element
-      if (result.data.content) {
+      if (result.content) {
         const contentEl = resultEl.createDiv({ cls: 'meilisearch-result-content' });
         
         const maxContentLength = 150;
-        let contentPreview = result.data.content.substring(0, maxContentLength);
-        if (result.data.content.length > maxContentLength) {
+        let contentPreview = result.content.substring(0, maxContentLength);
+        if (result.content.length > maxContentLength) {
           contentPreview += '...';
         }
         
@@ -142,7 +142,12 @@ export class BasicSearchUI implements SearchUI {
   private selectCurrent(): void {
     if (this.selectedIndex >= 0 && this.selectedIndex < this.results.length) {
       const result = this.results[this.selectedIndex];
-      this.props?.onSubmit(result, []);
+      const searchDatum: SearchDatum = {
+        content: result.content,
+        subText: result.path,
+        data: result,
+      };
+      this.props?.onSubmit(searchDatum, []);
     }
   }
 
