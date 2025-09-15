@@ -106,7 +106,7 @@ export class IndexingService {
                 const currentHash = await generateHash(content);
                 const existingMetadata = this.fileMetadata.get(file.path);
 
-                if (!existingMetadata) { // TODO: opti
+                if (!existingMetadata) {
                     // New file
                     const document = await parseDocument(file, content);
                     documentsToAdd.push(document);
