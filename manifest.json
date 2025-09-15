@@ -1,9 +1,9 @@
 {
     "id": "meilisearch-md",
-    "name": "Meili Search MD",
+    "name": "Meilisearch MD",
     "version": "1.0.0",
     "minAppVersion": "0.15.0",
-    "description": "Integrates MeiliSearch with Obsidian for enhanced search capabilities.",
+    "description": "Never lose your notes. Instantly find the information you need with Meilisearch's intelligent engine that just understands your intent.",
     "author": "rom100main",
     "authorUrl": "http://rom100main.free.fr",
     "isDesktopOnly": true
