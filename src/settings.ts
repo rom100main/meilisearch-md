@@ -7,4 +7,4 @@ export const DEFAULT_SETTINGS: MeilisearchSettings = {
     autoIndexOnStartup: true,
 };
 
-export const METADATA_FILENAME = "meilisearch-metadata.json";
+export const METADATA_FILENAME = ".meilisearch-metadata.json";
