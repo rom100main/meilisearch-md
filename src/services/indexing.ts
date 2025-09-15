@@ -58,6 +58,20 @@ export class IndexingService {
             showError(`Failed to save metadata: ${error.message}`);
         }
     }
+    /**
+     * Update metadata for a specific file
+     */
+    updateFileMetadata(path: string, metadata: FileMetadata): void {
+        this.fileMetadata.set(path, metadata);
+    }
+
+    /**
+     * Remove metadata for a specific file
+     */
+    removeFileMetadata(path: string): void {
+        this.fileMetadata.delete(path);
+    }
+
 
     /**
      * Perform incremental indexing - only index new or modified files
@@ -92,7 +106,7 @@ export class IndexingService {
                 const currentHash = await generateHash(content);
                 const existingMetadata = this.fileMetadata.get(file.path);
 
-                if (!existingMetadata) {
+                if (!existingMetadata) { // TODO: opti
                     // New file
                     const document = await parseDocument(file, content);
                     documentsToAdd.push(document);

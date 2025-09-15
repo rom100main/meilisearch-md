@@ -32,6 +32,8 @@ export default class MeilisearchPlugin extends Plugin {
         this.addSettingTab(new MeilisearchSettingTab(this.app, this));
 
         this.app.workspace.onLayoutReady(async () => {
+            await this.indexingService.loadMetadata();
+
             if (this.settings.autoIndexOnStartup) {
                 await this.autoIndex();
             }
@@ -162,7 +164,6 @@ export default class MeilisearchPlugin extends Plugin {
      */
     private async autoIndex(): Promise<void> {
         try {
-            await this.indexingService.loadMetadata();
             await this.indexingService.incrementalIndex();
         } catch (error) {
             console.error("Auto-indexing failed:", error);
@@ -177,7 +178,16 @@ export default class MeilisearchPlugin extends Plugin {
         try {
             const { parseDocument } = await import("./src/services/parser");
             const document = await parseDocument(file, content);
+            
             await this.meilisearchService.indexDocuments([document]);
+            
+            this.indexingService.updateFileMetadata(file.path, {
+                path: file.path,
+                hash: document.hash,
+                meilisearchId: document.id,
+                indexedAt: Date.now(),
+            });
+            await this.indexingService.saveMetadata();
         } catch (error) {
             console.error(`Failed to index file ${file.path}:`, error);
             throw error;
@@ -190,6 +200,9 @@ export default class MeilisearchPlugin extends Plugin {
     private async removeFromIndex(file: TFile): Promise<void> {
         try {
             await this.meilisearchService.deleteDocuments([file.path]);
+            
+            this.indexingService.removeFileMetadata(file.path);
+            await this.indexingService.saveMetadata();
         } catch (error) {
             console.error(`Failed to remove file from index ${file.path}:`, error);
             throw error;
