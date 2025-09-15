@@ -89,12 +89,12 @@ export class IndexingService {
                 });
 
                 const content = await this.app.vault.cachedRead(file);
-                const currentHash = generateHash(content);
+                const currentHash = await generateHash(content);
                 const existingMetadata = this.fileMetadata.get(file.path);
 
                 if (!existingMetadata) {
                     // New file
-                    const document = parseDocument(file, content);
+                    const document = await parseDocument(file, content);
                     documentsToAdd.push(document);
                     this.fileMetadata.set(file.path, {
                         path: file.path,
@@ -104,7 +104,7 @@ export class IndexingService {
                     });
                 } else if (existingMetadata.hash !== currentHash) {
                     // Modified file
-                    const document = parseDocument(file, content);
+                    const document = await parseDocument(file, content);
                     documentsToUpdate.push(document);
                     this.fileMetadata.set(file.path, {
                         path: file.path,
@@ -194,7 +194,7 @@ export class IndexingService {
                 });
 
                 const content = await this.app.vault.cachedRead(file);
-                const document = parseDocument(file, content);
+                const document = await parseDocument(file, content);
                 documents.push(document);
 
                 // Update metadata

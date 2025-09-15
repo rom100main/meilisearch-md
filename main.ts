@@ -176,7 +176,7 @@ export default class MeilisearchPlugin extends Plugin {
     private async indexFile(file: TFile, content: string): Promise<void> {
         try {
             const { parseDocument } = await import("./src/services/parser");
-            const document = parseDocument(file, content);
+            const document = await parseDocument(file, content);
             await this.meilisearchService.indexDocuments([document]);
         } catch (error) {
             console.error(`Failed to index file ${file.path}:`, error);

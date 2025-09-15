@@ -8,7 +8,7 @@ import { TFile, parseYaml } from "obsidian";
  * @param content The file content
  * @returns DocumentData object with parsed information
  */
-export function parseDocument(file: TFile, content: string): DocumentData {
+export async function parseDocument(file: TFile, content: string): Promise<DocumentData> {
     const name = file.basename;
     const path = file.path;
 
@@ -30,7 +30,7 @@ export function parseDocument(file: TFile, content: string): DocumentData {
         }
     }
 
-    const hash = generateHash(content);
+    const hash = await generateHash(content);
 
     // Sanitize path to create a valid ID (alphanumeric, hyphens, underscores)
     const sanitizedId = path.replace(/[^a-zA-Z0-9-_]/g, "_");
