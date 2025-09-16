@@ -10,7 +10,7 @@ Never lose your notes. Instantly find the information you need with [Meilisearch
 
 ## Requirements
 
-- Obsidian v0.15.0 or higher
+- Obsidian
 - A running Meilisearch instance (local or remote)
 
 ## Run Meilisearch
