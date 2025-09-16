@@ -57,6 +57,13 @@ For more configuration options, refer to the [Meilisearch documentation](https:/
 - **Index name**: The name of the index in Meilisearch to use for your vault
 - **Auto-index on startup**: Automatically index new or modified files when Obsidian starts
 
+## Install the Plugin manually
+
+1. Download the latest release from the [GitHub releases page](https://github.com/rom100main/meilisearch-md/releases)
+2. In `.obsidian/plugins/`, create a folder named `meilisearch-md`
+3. Copy `main.js`, `manifest.json`, and `styles.css` from the downloaded release to the `meilisearch-md` folder
+4. Enable the plugin in Obsidian's settings under "Community plugins"
+
 ## Privacy
 
 This plugin processes your note content locally before sending it to your Meilisearch instance. No data is sent to external servers except your configured Meilisearch instance. All indexing and searching happens within your local environment and your Meilisearch server.
