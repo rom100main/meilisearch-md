@@ -10,12 +10,12 @@ Never lose your notes. Instantly find the information you need with [Meilisearch
 
 ## Requirements
 
-- Obsidian
+- [Obsidian](https://obsidian.md/) v1.9.0 or later
 - A running Meilisearch instance (local or remote)
 
 ## Run Meilisearch
 
-[Install Meilisearch locally](https://www.meilisearch.com/docs/learn/self_hosted/install_meilisearch_locally) and run it in background  
+[Install Meilisearch locally](README.md#local-installation) and run it in background  
 or  
 Use a [Meilisearch Cloud](https://www.meilisearch.com/pricing) instance
 
@@ -38,9 +38,11 @@ brew install meilisearch
 brew services start meilisearch # to run it in background and at startup
 ```
 
+More info on [Meilisearch installation](https://www.meilisearch.com/docs/learn/self_hosted/install_meilisearch_locally).
+
 ### Configure Meilisearch
 
-By default, all settings work with the Obsidian plugin.
+By default, Meilisearch settings work with the Obsidian plugin.
 
 For more configuration options, refer to the [Meilisearch documentation](https://www.meilisearch.com/docs).
 
