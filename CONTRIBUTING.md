@@ -17,7 +17,7 @@ We welcome contributions to the Meilisearch MD plugin! Here's how you can get in
 - Use TypeScript with strict type checking
 - Follow the existing code style
 - Add JSDoc comments for public methods
-- Run ESLint before committing (`npx eslint . --fix`)
+- Run linter before committing (`npm run lint:fix`)
 - Write clear, descriptive commit messages, use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) style
 
 ### Testing
@@ -25,7 +25,7 @@ We welcome contributions to the Meilisearch MD plugin! Here's how you can get in
 Before submitting a pull request, please ensure that:
 
 1. The plugin builds without errors (`npm run build`)
-2. You run ESLint and Prettier to ensure code quality
+2. You run the linter and fix any issues (`npm run lint`)
 3. The plugin loads correctly in Obsidian
 4. All functionality works as expected
 5. The code follows the [project](CONTRIBUTING.md#project-guidelines) and [Obsidian](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines) guidelines
