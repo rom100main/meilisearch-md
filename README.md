@@ -69,4 +69,4 @@ See [CHANGELOG](CHANGELOG.md) for a list of changes in each version.
 
 ## Development
 
-For development information, see [README-DEV](README-DEV.md).
+For development information, see [CONTRIBUTING](CONTRIBUTING.md).

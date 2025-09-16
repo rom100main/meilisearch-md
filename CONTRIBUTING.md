@@ -1,25 +1,48 @@
 # Meilisearch MD - Developer Documentation
 
-This document contains information for developers who want to contribute to the Meilisearch MD plugin.
+## Contributing
+
+We welcome contributions to the Meilisearch MD plugin! Here's how you can get involved:
+
+### Getting Started
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Project Guidelines
+
+- Use TypeScript with strict type checking
+- Follow the existing code style
+- Add JSDoc comments for public methods
+- Run ESLint before committing (`npx eslint . --fix`)
+- Run Prettier before committing (`npx prettier --config .prettierrc --write .`)
+- Write clear, descriptive commit messages, use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) style
+
+### Testing
+
+Before submitting a pull request, please ensure that:
+
+1. The plugin builds without errors (`npm run build`)
+2. You run ESLint and Prettier to ensure code quality
+3. The plugin loads correctly in Obsidian
+4. All functionality works as expected
+5. The code follows the [project](CONTRIBUTING.md#project-guidelines) and [Obsidian](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines) guidelines
 
 ## Development Setup
 
 ### Prerequisites
 
-- Node.js (v16 or higher)
+- Node.js
 - npm
 - Git
 - Meilisearch
 
 ### Installation
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/rom100main/meilisearch-md.git
-   cd meilisearch-md
-   ```
-
-2. Install dependencies:
+1. Install dependencies:
    ```bash
    npm install
    ```
@@ -96,29 +119,3 @@ meilisearch-md/
    - File system events are monitored
    - New/modified files are automatically indexed
    - Deleted files are removed from the index
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'feat: add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-<!-- TODO: merge with setup and put it first -->
-
-### Code Style
-
-- Use TypeScript with strict type checking
-- Follow the existing code style
-- Add JSDoc comments for public methods
-- Write clear, descriptive commit messages, use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) style
-
-### Testing
-
-Before submitting a pull request, please ensure that:
-
-1. The plugin builds without errors (`npm run build`)
-2. The plugin loads correctly in Obsidian
-3. All functionality works as expected
-4. The code follows the project's and Obsidian's style guidelines
