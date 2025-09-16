@@ -178,9 +178,9 @@ export default class MeilisearchPlugin extends Plugin {
         try {
             const { parseDocument } = await import("./src/services/parser");
             const document = await parseDocument(file, content);
-            
+
             await this.meilisearchService.indexDocuments([document]);
-            
+
             this.indexingService.updateFileMetadata(file.path, {
                 path: file.path,
                 hash: document.hash,
@@ -200,7 +200,7 @@ export default class MeilisearchPlugin extends Plugin {
     private async removeFromIndex(file: TFile): Promise<void> {
         try {
             await this.meilisearchService.deleteDocuments([file.path]);
-            
+
             this.indexingService.removeFileMetadata(file.path);
             await this.indexingService.saveMetadata();
         } catch (error) {

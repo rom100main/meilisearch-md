@@ -72,7 +72,6 @@ export class IndexingService {
         this.fileMetadata.delete(path);
     }
 
-
     /**
      * Perform incremental indexing - only index new or modified files
      */

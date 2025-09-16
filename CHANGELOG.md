@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2023-10-15
 
 ### Added
+
 - Initial release of Meilisearch MD plugin
 - Full-text search across note titles, content, and yaml frontmatter with relevance scoring
 - Commands for search, reindexing, and connection testing

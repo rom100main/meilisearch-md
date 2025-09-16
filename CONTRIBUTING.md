@@ -43,24 +43,25 @@ Before submitting a pull request, please ensure that:
 ### Installation
 
 1. Install dependencies:
-   ```bash
-   npm install
-   ```
+    ```bash
+    npm install
+    ```
 
 ### Development Workflow
 
 1. Start the development server:
-   ```bash
-   npm run dev
-   ```
+
+    ```bash
+    npm run dev
+    ```
 
 2. Make changes to the source code in the `src/` directory.
 
 3. The plugin will be automatically compiled to `main.js`.
 
 4. To test the plugin:
-   - Copy `main.js`, `manifest.json`, and `styles.css` to your Obsidian vault's plugins folder: `<Vault>/.obsidian/plugins/meilisearch-md/`
-   - Reload Obsidian and enable the plugin in **Settings → Community plugins**
+    - Copy `main.js`, `manifest.json`, and `styles.css` to your Obsidian vault's plugins folder: `<Vault>/.obsidian/plugins/meilisearch-md/`
+    - Reload Obsidian and enable the plugin in **Settings → Community plugins**
 
 ## Project Structure
 
@@ -105,17 +106,17 @@ meilisearch-md/
 ### Data Flow
 
 1. **Indexing**:
-   - Files are parsed into `DocumentData` objects
-   - Documents are sent to Meilisearch for indexing
-   - Metadata is stored locally to track indexed files
+    - Files are parsed into `DocumentData` objects
+    - Documents are sent to Meilisearch for indexing
+    - Metadata is stored locally to track indexed files
 
 2. **Searching**:
-   - User enters a query in the search modal
-   - Query is sent to Meilisearch
-   - Results are displayed with scoring
-   - User can click on results to open the corresponding notes
+    - User enters a query in the search modal
+    - Query is sent to Meilisearch
+    - Results are displayed with scoring
+    - User can click on results to open the corresponding notes
 
 3. **Real-time Updates**:
-   - File system events are monitored
-   - New/modified files are automatically indexed
-   - Deleted files are removed from the index
+    - File system events are monitored
+    - New/modified files are automatically indexed
+    - Deleted files are removed from the index

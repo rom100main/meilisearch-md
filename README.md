@@ -24,6 +24,7 @@ Use a [Meilisearch Cloud](https://www.meilisearch.com/pricing) instance
 On Windows, I advice you to download the executable in a dedicated folder and add a shortcut to your startup folder.
 
 On Linux based systems, you can use the following command to download and run Meilisearch:
+
 ```bash
 curl -L https://install.meilisearch.com | sh
 systemctl --user start meilisearch
@@ -31,6 +32,7 @@ systemctl --user enable meilisearch # to run it at startup
 ```
 
 On MacOS, you can use Homebrew:
+
 ```bash
 brew install meilisearch
 brew services start meilisearch # to run it in background and at startup
