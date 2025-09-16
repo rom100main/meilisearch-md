@@ -2,6 +2,8 @@ import eslint from "@eslint/js";
 import tseslint from "@typescript-eslint/eslint-plugin";
 import tsparser from "@typescript-eslint/parser";
 import globals from "globals";
+import eslintConfigPrettier from "eslint-config-prettier/flat";
+import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 
 export default [
     eslint.configs.recommended,
@@ -33,4 +35,6 @@ export default [
     {
         ignores: ["node_modules/", "main.js", "version-bump.mjs"],
     },
+    eslintConfigPrettier,
+    eslintPluginPrettierRecommended,
 ];

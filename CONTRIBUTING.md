@@ -18,7 +18,6 @@ We welcome contributions to the Meilisearch MD plugin! Here's how you can get in
 - Follow the existing code style
 - Add JSDoc comments for public methods
 - Run ESLint before committing (`npx eslint . --fix`)
-- Run Prettier before committing (`npx prettier --config .prettierrc --write .`)
 - Write clear, descriptive commit messages, use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) style
 
 ### Testing
