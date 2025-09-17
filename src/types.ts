@@ -3,6 +3,8 @@ export interface MeilisearchSettings {
     apiKey: string;
     indexName: string;
     autoIndexOnStartup: boolean;
+    enableHybridSearch: boolean;
+    semanticRatio: number;
 }
 
 export interface DocumentData {

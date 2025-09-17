@@ -5,6 +5,8 @@ export const DEFAULT_SETTINGS: MeilisearchSettings = {
     apiKey: "",
     indexName: "obsidian-vault",
     autoIndexOnStartup: true,
+    enableHybridSearch: false,
+    semanticRatio: 0.5,
 };
 
 export const METADATA_FILENAME = ".meilisearch-metadata.json";

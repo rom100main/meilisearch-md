@@ -116,5 +116,31 @@ export class MeilisearchSettingTab extends PluginSettingTab {
                         }
                     }),
             );
+
+        new Setting(containerEl).setName("Semantic search").setHeading();
+
+        new Setting(containerEl)
+            .setName("Enable hybrid search")
+            .setDesc("Enable hybrid search combining keyword and semantic search. This will slow down search performance.")
+            .addToggle((toggle) =>
+                toggle.setValue(this.plugin.settings.enableHybridSearch).onChange(async (value) => {
+                    this.plugin.settings.enableHybridSearch = value;
+                    await this.plugin.saveSettings();
+                }),
+            );
+
+        new Setting(containerEl)
+            .setName("Semantic ratio")
+            .setDesc("Balance between keyword and semantic search results (0% = keyword only, 100% = semantic only).")
+            .addSlider((slider) =>
+                slider
+                    .setLimits(0, 100, 5)
+                    .setValue(this.plugin.settings.semanticRatio * 100)
+                    .setDynamicTooltip()
+                    .onChange(async (value) => {
+                        this.plugin.settings.semanticRatio = value / 100;
+                        await this.plugin.saveSettings();
+                    }),
+            );
     }
 }

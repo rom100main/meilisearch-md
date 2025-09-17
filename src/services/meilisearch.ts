@@ -8,6 +8,10 @@ interface SearchOptions {
     attributesToCrop?: string[];
     cropLength?: number;
     showRankingScore?: boolean;
+    hybrid?: {
+        embedder: string;
+        semanticRatio: number;
+    };
     [key: string]: unknown;
 }
 
@@ -45,6 +49,7 @@ export class MeilisearchService {
             }
 
             await this.configureSearchableAttributes();
+            await this.configureEmbedders();
 
             return true;
         } catch (error) {
@@ -65,6 +70,35 @@ export class MeilisearchService {
             await this.index.updateFilterableAttributes(["path"]);
         } catch (error) {
             console.error("Failed to configure searchable attributes:", error);
+        }
+    }
+
+    /**
+     * Configure embedders for semantic search
+     */
+    private async configureEmbedders(): Promise<void> {
+        if (!this.index) return;
+
+        try {
+            if (this.settings.enableHybridSearch) {
+                // Configure HuggingFace embedder
+                const embedders = {
+                    default: {
+                        source: "huggingFace" as const,
+                        model: "Lajavaness/bilingual-embedding-small", //"intfloat/multilingual-e5-small",
+                        documentTemplate: `{{doc.name}}
+{{doc.content}}`,
+                    },
+                };
+
+                await this.index.updateEmbedders(embedders);
+            } else {
+                // Remove embedders if hybrid search is disabled
+                await this.index.resetEmbedders();
+            }
+        } catch (error) {
+            console.error("Failed to configure embedders:", error);
+            // Don't throw error here as embedders are optional
         }
     }
 
@@ -115,12 +149,21 @@ export class MeilisearchService {
         }
 
         try {
-            const searchParams = {
+            const searchParams: SearchOptions = {
                 limit: 20,
                 attributesToHighlight: ["name", "content"],
                 attributesToRetrieve: ["id", "name", "path", "content", "frontmatter"],
                 ...options,
             };
+
+            // Add hybrid search parameters if enabled
+            if (this.settings.enableHybridSearch) {
+                searchParams.hybrid = {
+                    embedder: "default",
+                    semanticRatio: this.settings.semanticRatio,
+                    ...options.hybrid,
+                };
+            }
 
             const result = await this.index.search(query, searchParams);
             return result;
@@ -154,7 +197,7 @@ export class MeilisearchService {
     private async waitForTask(taskUid: number): Promise<void> {
         if (!this.client) return;
 
-        const maxAttempts = 60; // 60 attempts * 1 second = 1 minute max
+        const maxAttempts = 600; // 60 attempts * 1 second = 1 minute max
         let attempts = 0;
 
         while (attempts < maxAttempts) {
