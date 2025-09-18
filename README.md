@@ -4,7 +4,7 @@ Never lose your notes. Instantly find the information you need with [Meilisearch
 
 ## Features
 
-- **Intelligent search**: Advanced full-text search with relevancy algorithms, typo-tolerance, and semantic search capabilities
+- **Intelligent search**: Advanced full-text search with relevancy algorithms and typo-tolerance capabilities
 - **Real-time indexing**: Automatically index new and modified notes as you work
 - **Customizable settings**: Configure Meilisearch connection and indexing behavior
 
