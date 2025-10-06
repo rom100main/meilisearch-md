@@ -1,10 +1,10 @@
 {
-    "id": "meilisearch-md",
-    "name": "Meilisearch MD",
-    "version": "1.0.1",
-    "minAppVersion": "1.9.0",
-    "description": "Never lose your notes. Instantly find the information you need with Meilisearch's intelligent engine that just understands your intent.",
-    "author": "rom100main",
-    "authorUrl": "http://rom100main.free.fr",
-    "isDesktopOnly": true
+	"id": "meilisearch-md",
+	"name": "Meilisearch MD",
+	"version": "1.0.1",
+	"minAppVersion": "1.9.0",
+	"description": "Never lose your notes. Instantly find the information you need with Meilisearch's intelligent engine that just understands your intent.",
+	"author": "rom100main",
+	"authorUrl": "http://rom100main.free.fr",
+	"isDesktopOnly": true
 }
