@@ -21,7 +21,12 @@ export default class MeilisearchPlugin extends Plugin {
         await this.loadSettings();
 
         this.meilisearchService = new MeilisearchService(this.settings);
-        await this.initializeMeilisearch();
+
+        try {
+            await this.initializeMeilisearch();
+        } catch {
+            return;
+        }
 
         this.indexingService = new IndexingService(this.app, this.meilisearchService, (progress: IndexingProgress) => {
             this.indexingProgress = progress;
@@ -62,14 +67,16 @@ export default class MeilisearchPlugin extends Plugin {
      * Initialize Meilisearch connection
      */
     private async initializeMeilisearch(): Promise<void> {
+        let success = false;
         try {
-            const success = await this.meilisearchService.initialize();
-            if (!success) {
-                showError("Failed to initialize Meilisearch");
-            }
+            success = await this.meilisearchService.initialize();
         } catch (error) {
             console.error("Failed to initialize Meilisearch:", error);
             showError(`Failed to initialize Meilisearch: ${error.message}`);
+            throw error;
+        }
+        if (!success) {
+            throw new Error("Failed to initialize Meilisearch");
         }
     }
 

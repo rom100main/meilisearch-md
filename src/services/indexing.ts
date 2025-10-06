@@ -40,6 +40,7 @@ export class IndexingService {
         } catch (error) {
             console.error("Failed to load metadata:", error);
             showError(`Failed to load metadata: ${error.message}`);
+            throw error;
         }
     }
 
